@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geolocation API</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    #status {
+      margin-top: 16px;
+      min-height: 24px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    iframe {
+      margin-top: 20px;
+      width: 100%;
+      height: 320px;
+      border: none;
+      border-radius: 12px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Geolocation API</h1>
+    <button onclick="getLocation()">Obtenir ma position</button>
+    <p id="status"></p>
+    <iframe id="map" title="Carte"></iframe>
+  </div>
+
+  <script>
+    const statusText = document.getElementById('status');
+    const map = document.getElementById('map');
+
+    function getLocation() {
+      if (!navigator.geolocation) {
+        statusText.textContent = 'Géolocalisation non supportée par ce navigateur.';
+        return;
+      }
+
+      statusText.textContent = 'Localisation en cours...';
+
+      navigator.geolocation.getCurrentPosition(success, error, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
+    }
+
+    function success(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      statusText.textContent = `Latitude : ${lat.toFixed(6)} | Longitude : ${lon.toFixed(6)}`;
+      map.src = `https://www.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
+      map.style.display = 'block';
+    }
+
+    function error(err) {
+      if (err.code === 1) {
+        statusText.textContent = 'Permission refusée.';
+      } else if (err.code === 2) {
+        statusText.textContent = 'Position indisponible.';
+      } else if (err.code === 3) {
+        statusText.textContent = 'Temps de réponse dépassé.';
+      } else {
+        statusText.textContent = 'Erreur inconnue.';
+      }
+    }
+  </script>
+</body>
+</html>
